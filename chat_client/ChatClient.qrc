@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/ChatClient">
+        <file>res/catbug.png</file>
+        <file>style/style_sheet.qss</file>
+    </qresource>
+</RCC>
