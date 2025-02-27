@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FileLogger.hpp"
-#include "Enumerations.h"
+#include "global.h"
 
 #include <QDialog>
 #include <QRegularExpression>
@@ -40,5 +40,5 @@ private:
 private slots:
 	void Slot_OnSendVerificationCode();
 
-	void Slot_OnRegisterDialogClose( EnumRequestType req_type, QString result, EnumError error );
+	void Slot_OnRegisterModuleFinish( EnumRequestType req_type, QString result, EnumError error );
 };

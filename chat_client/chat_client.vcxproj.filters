@@ -57,9 +57,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileLogger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Polisher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,7 +72,7 @@
     <ClInclude Include="EnumError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enumerations.h">
+    <ClInclude Include="global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -97,5 +94,8 @@
     <QtUic Include="RegisterDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
   </ItemGroup>
 </Project>

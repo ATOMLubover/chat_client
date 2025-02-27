@@ -13,9 +13,7 @@ ChatClient::ChatClient( QWidget* parent )
 }
 
 ChatClient::~ChatClient()
-{
-	logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Info, "mainwindow destructed" );
-}
+{ }
 
 void ChatClient::Start()
 { }

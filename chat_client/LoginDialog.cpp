@@ -12,9 +12,7 @@ LoginDialog::LoginDialog( QWidget* parent )
 }
 
 LoginDialog::~LoginDialog()
-{ 
-	logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Info, "login dialog destructed" );
-}
+{ }
 
 void LoginDialog::InitUi()
 { 

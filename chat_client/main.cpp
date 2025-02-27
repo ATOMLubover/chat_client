@@ -4,7 +4,7 @@
 #include <QtWidgets/QApplication>
 #include <QFile>
 
-hatsuiki::SyncFileLogger logger( "log.txt" );
+// hatsuiki::SyncFileLogger logger( "log.txt" );
 
 void LoadQss( QApplication& app )
 {
@@ -12,7 +12,8 @@ void LoadQss( QApplication& app )
 
 	if ( qfile_qss.open( QFile::ReadOnly ) )
 	{
-		logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Info, "qss file is opened successfully" );
+		// logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Info, "qss file is opened successfully" );
+		std::cout << "qss file open failed" << std::endl;
 
 		QString qstr_style = QLatin1String( qfile_qss.readAll() );
 		app.setStyleSheet( qstr_style );
@@ -21,7 +22,8 @@ void LoadQss( QApplication& app )
 	}
 	else
 	{
-		logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Error, "qss file fails to open" );
+		// logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Error, "qss file fails to open" );
+		std::cout << "qss file open failed" << std::endl;
 	}
 }
 

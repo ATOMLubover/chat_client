@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Singleton.h"
-#include "Enumerations.h"
+#include "global.h"
 #include "FileLogger.hpp"
 
 #include <QString>
@@ -18,8 +18,8 @@
 
 class HttpMgr
 	: public QObject
+	, public std::enable_shared_from_this<HttpMgr>
 	, public Singleton<HttpMgr>
-	, std::enable_shared_from_this<HttpMgr>
 { 
 	Q_OBJECT
 
@@ -29,12 +29,12 @@ public:
 public:
 	~HttpMgr();
 
+	void PostRequest( QUrl url, QJsonObject json, EnumRequestType req_type, EnumModule mod );
+
 private:
 	HttpMgr();
 
 	void InitSlots();
-
-	void PostRequest( QUrl url, QJsonObject json, EnumRequestType req_type, EnumModule mod );
 
 private:
 	QNetworkAccessManager manager;

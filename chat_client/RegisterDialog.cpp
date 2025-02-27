@@ -17,13 +17,11 @@ RegisterDialog::RegisterDialog( QWidget* parent )
 }
 
 RegisterDialog::~RegisterDialog()
-{
-	logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Info, "register dialog destructed" );
-}
+{ }
 
 void RegisterDialog::InitUi()
 {
-	ui->edit_password->setEchoMode( QLineEdit::Password );
+	ui->edit_password->setEchoMode( QLineEdit::Password ); 
 	ui->edit_comfirm_password->setEchoMode( QLineEdit::Password );
 
 	UpdateLabelError( "error_tip", "normal" );
@@ -35,7 +33,7 @@ void RegisterDialog::InitSlots()
 			 this, &RegisterDialog::Slot_OnSendVerificationCode );
 
 	connect( HttpMgr::GetInstance().get(), &HttpMgr::Signal_RegisterModuleFinish,
-			 this, &RegisterDialog::Slot_OnRegisterDialogClose );
+			 this, &RegisterDialog::Slot_OnRegisterModuleFinish );
 }
 
 void RegisterDialog::InitHttpHandlers()
@@ -53,8 +51,7 @@ void RegisterDialog::InitHttpHandlers()
 
 							  QString email = json[ "email" ].toString();
 							  UpdateLabelError( tr( "verification code has been sent to your email" ), "normal" );
-
-							  
+							  std::cout << "email sent: " << email.toStdString() << std::endl;
 						  } );
 }
 
@@ -69,11 +66,21 @@ void RegisterDialog::Slot_OnSendVerificationCode()
 {
 	QString email = ui->edit_mail->text();
 
+	std::cout << email.toStdString() << std::endl;
+
 	QRegularExpression regex_mail_fmt( R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)" );
 	bool is_match = regex_mail_fmt.match( email ).hasMatch();
 	if ( is_match )
 	{
-		// TODO: send http verification code
+		QJsonObject json_data;
+		json_data.insert( "email", email );
+
+		HttpMgr::GetInstance()->PostRequest( QUrl( "http://localhost:8080/get_verification_code" ),
+											 json_data,
+											 EnumRequestType::GetVerificationCode, 
+											 EnumModule::RegisterMod );
+
+		UpdateLabelError( "Verification code has been sent to your email!", "normal" );
 	}
 	else
 	{
@@ -81,7 +88,7 @@ void RegisterDialog::Slot_OnSendVerificationCode()
 	}
 }
 
-void RegisterDialog::Slot_OnRegisterDialogClose( EnumRequestType req_type, QString result, EnumError error )
+void RegisterDialog::Slot_OnRegisterModuleFinish( EnumRequestType req_type, QString result, EnumError error )
 {
 	if ( error != EnumError::Success )
 	{

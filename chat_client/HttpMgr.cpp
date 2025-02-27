@@ -32,8 +32,9 @@ void HttpMgr::PostRequest( QUrl url, QJsonObject json, EnumRequestType req_type,
 			 {
 				 if ( reply->error() != QNetworkReply::NoError )
 				 {
-					 logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Error,
-								 "net error on url \"{}\"", QString( url.toString() ).toStdString() );
+					 //logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Error,
+						//		 "net error on url \"{}\"", QString( url.toString() ).toStdString() );
+					 std::cout << "net error on url:" << QString( url.toString() ).toStdString() << std::endl;
 					 emit self->Signal_HttpSendFinished( req_type, "", EnumError::ErrNetwork, mod );
 
 					 reply->deleteLater();
