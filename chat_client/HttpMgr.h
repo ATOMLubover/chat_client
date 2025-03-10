@@ -46,5 +46,5 @@ private slots:
 signals:
 	void Signal_HttpSendFinished( EnumRequestType req_type, QString result, // result is in json format
 								  EnumError error, EnumModule mod );
-	void Signal_RegisterModuleFinish( EnumRequestType req_type, QString result, EnumError error );
+	void SignalOut_ToReg_HttpFinished( EnumRequestType req_type, QString result, EnumError error );
 };

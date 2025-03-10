@@ -2,6 +2,6 @@
 
 enum class EnumRequestType
 {
-	GetVerificationCode,
-	RegisterUser
+	GetVerificationCode = 101,
+	RegisterUser = 102
 };

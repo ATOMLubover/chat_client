@@ -1,13 +1,15 @@
-#include "HttpMgr.h"
-
-extern hatsuiki::SyncFileLogger logger;
+﻿#include "HttpMgr.h"
 
 HttpMgr::~HttpMgr()
-{ }
+{
+	std::cout << "HttpMgr deconstructed" << std::endl;
+}
 
 HttpMgr::HttpMgr()
 { 
 	InitSlots();
+
+	std::cout << "HttpMgr constructed" << std::endl;
 }
 
 void HttpMgr::InitSlots()
@@ -32,8 +34,6 @@ void HttpMgr::PostRequest( QUrl url, QJsonObject json, EnumRequestType req_type,
 			 {
 				 if ( reply->error() != QNetworkReply::NoError )
 				 {
-					 //logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Error,
-						//		 "net error on url \"{}\"", QString( url.toString() ).toStdString() );
 					 std::cout << "net error on url:" << QString( url.toString() ).toStdString() << std::endl;
 					 emit self->Signal_HttpSendFinished( req_type, "", EnumError::ErrNetwork, mod );
 
@@ -43,6 +43,7 @@ void HttpMgr::PostRequest( QUrl url, QJsonObject json, EnumRequestType req_type,
 				 }
 
 				 QString result = reply->readAll();
+				 std::cout << "signal QReply finished" << std::endl;
 				 emit self->Signal_HttpSendFinished( req_type, result, EnumError::Success, mod );
 
 				 reply->deleteLater();
@@ -54,7 +55,7 @@ void HttpMgr::Slot_OnHttpSendFinished( EnumRequestType req_type, QString result,
 {
 	if ( mod == EnumModule::RegisterMod )
 	{
-		// notify specific module http respondance finished
-		emit Signal_RegisterModuleFinish( req_type, result, error );
+		std::cout << "slot HttpMgr OnHttpSendFinished" << std::endl;
+		emit SignalOut_ToReg_HttpFinished( req_type, result, error );
 	}
 }

@@ -36,9 +36,10 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>thirdparty_qt</QtInstall>
+    <QtInstall>qt-6.8.2-debug</QtInstall>
     <QtModules>core;gui;widgets;network</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
+    <QtPathBinaries>$(QTDIR)\bin</QtPathBinaries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>qt-6.8.2</QtInstall>
@@ -104,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="global.cpp" />
     <ClCompile Include="HttpMgr.cpp" />
     <ClCompile Include="Polisher.cpp" />
     <ClCompile Include="RegisterDialog.cpp" />

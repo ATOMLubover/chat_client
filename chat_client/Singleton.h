@@ -11,8 +11,10 @@ class Singleton
 public:
 	static std::shared_ptr<T> GetInstance()
 	{
-		std::once_flag flag;
-		std::call_once( flag, [&] () { instance = std::shared_ptr<T>( new T ); } );
+		//std::once_flag flag;
+		//std::call_once( flag, [&] () { instance = std::shared_ptr<T>( new T ); } );
+
+		static std::shared_ptr<T> instance = std::shared_ptr<T>( new T );
 
 		return instance;
 	}

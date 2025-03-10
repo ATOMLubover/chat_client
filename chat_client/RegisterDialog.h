@@ -39,6 +39,7 @@ private:
 
 private slots:
 	void Slot_OnSendVerificationCode();
+	void Slot_OnConfirm();
 
-	void Slot_OnRegisterModuleFinish( EnumRequestType req_type, QString result, EnumError error );
+	void Slot_HandleWhenHttpFinished( EnumRequestType req_type, QString result, EnumError error );
 };

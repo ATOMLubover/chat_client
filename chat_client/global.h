@@ -4,6 +4,11 @@
 #include "EnumModule.h"
 #include "EnumRequestType.h"
 
+#include <QString>
+#include <QFile>
+#include <QDir>
+#include <QSettings>
+
 #include <string>
 
-extern std::string gate_url_prefix;
+extern QString gate_url_prefix;
