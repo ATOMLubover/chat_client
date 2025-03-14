@@ -210,7 +210,7 @@
             <widget class="QLineEdit" name="edit_verify"/>
            </item>
            <item>
-            <widget class="QPushButton" name="button_get_verify">
+            <widget class="TimerButton" name="button_get_verify">
              <property name="text">
               <string>Get</string>
              </property>
@@ -270,6 +270,13 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TimerButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">TimerButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

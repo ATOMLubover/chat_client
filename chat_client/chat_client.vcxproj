@@ -109,6 +109,7 @@
     <ClCompile Include="HttpMgr.cpp" />
     <ClCompile Include="Polisher.cpp" />
     <ClCompile Include="RegisterDialog.cpp" />
+    <ClCompile Include="TimerButton.cpp" />
     <QtRcc Include="ChatClient.qrc" />
     <QtUic Include="ChatClient.ui" />
     <QtMoc Include="ChatClient.h" />
@@ -119,8 +120,10 @@
     <QtUic Include="RegisterDialog.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IHasSlots.h" />
+    <ClInclude Include="TimerButton.h" />
     <QtMoc Include="HttpMgr.h" />
-    <ClInclude Include="Encipher.h" />
+    <ClInclude Include="Md5Encipher.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="EnumError.h" />
     <ClInclude Include="EnumModule.h" />

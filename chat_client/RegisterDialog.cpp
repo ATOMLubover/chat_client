@@ -2,7 +2,7 @@
 
 #include "Polisher.h"
 #include "HttpMgr.h"
-#include "Encipher.h"
+#include "Md5Encipher.h"
 
 RegisterDialog::RegisterDialog( QWidget* parent )
 	: QDialog( parent )
@@ -19,7 +19,7 @@ RegisterDialog::RegisterDialog( QWidget* parent )
 }
 
 RegisterDialog::~RegisterDialog()
-{ 
+{
 	std::cout << "RegisterDialog deconstruted" << std::endl;
 }
 
@@ -28,19 +28,40 @@ void RegisterDialog::InitUi()
 	ui->edit_password->setEchoMode( QLineEdit::Password );
 	ui->edit_comfirm_password->setEchoMode( QLineEdit::Password );
 
-	UpdateLabelError( "error_tip", "normal" );
+	UpdateLabelError( "", EnumLabelError::Normal );
 }
 
 void RegisterDialog::InitSlots()
 {
-	connect( ui->button_get_verify, &QPushButton::clicked,
-			 this, &RegisterDialog::Slot_OnSendVerificationCode );
+	// 处理和 ui 相关的信号与槽
+	{
+		connect( ui->button_get_verify, &QPushButton::clicked,
+				 this, &RegisterDialog::Slot_OnSendVerificationCode );
 
-	connect( ui->button_confirm, &QPushButton::clicked,
-			 this, &RegisterDialog::Slot_OnConfirm );
+		connect( ui->button_confirm, &QPushButton::clicked,
+				 this, &RegisterDialog::Slot_OnConfirm );
 
-	connect( HttpMgr::GetInstance().get(), &HttpMgr::SignalOut_ToReg_HttpFinished,
-			 this, &RegisterDialog::Slot_HandleWhenHttpFinished );
+		connect( ui->edit_account, &QLineEdit::editingFinished, 
+				 this, [this] () { Slot_CheckAccountValid(); } );
+
+		connect( ui->edit_mail, &QLineEdit::editingFinished, 
+				 this, [this] () { Slot_CheckEmailValid(); } );
+
+		connect( ui->edit_password, &QLineEdit::editingFinished, 
+				 this, [this] () { Slot_CheckPwdValid(); } );
+
+		connect( ui->edit_comfirm_password, &QLineEdit::editingFinished, 
+				 this, [this] () { Slot_CheckConfirmPwdValid(); } );
+
+		connect( ui->edit_verify, &QLineEdit::editingFinished, 
+				 this, [this] () { Slot_CheckVerificationValid(); } );
+	}
+
+	// 处理 http 相关的信号与槽
+	{
+		connect( HttpMgr::GetInstance().get(), &HttpMgr::SignalOut_ToReg_HttpFinished,
+				 this, &RegisterDialog::Slot_HandleWhenHttpFinished );
+	}
 }
 
 void RegisterDialog::InitHttpHandlers()
@@ -52,13 +73,13 @@ void RegisterDialog::InitHttpHandlers()
 
 							  if ( err != (int) EnumError::Success )
 							  {
-								  UpdateLabelError( tr( "wrong argument" ), "error" );
+								  UpdateLabelError( tr( "wrong argument" ), EnumLabelError::Error );
 								  return;
 							  }
 
 							  QString email = json[ "email" ].toString();
 							  UpdateLabelError(
-								  tr( "已发送验证码" ), "normal" );
+								  tr( "已发送验证码" ), EnumLabelError::Normal );
 							  std::cout << "发到邮箱：" << email.toStdString() << std::endl;
 						  } );
 
@@ -67,22 +88,23 @@ void RegisterDialog::InitHttpHandlers()
 						  {
 							  int error = json[ "error" ].toInt();
 							  if ( error != (int) EnumError::Success ) {
-								  UpdateLabelError( tr( "参数错误" ), "error" );
+								  UpdateLabelError( tr( "参数错误" ), EnumLabelError::Error );
 								  return;
 							  }
 							  auto email = json[ "email" ].toString();
 							  auto uid = json[ "uid" ].toString();
-							  UpdateLabelError( tr( "用户注册成功" ), "normal" );
+							  UpdateLabelError( tr( "用户注册成功" ), EnumLabelError::Normal );
 							  std::cout
 								  << "email returned: " << email.toStdString() << std::endl
 								  << "uid returned: " << uid.toStdString() << std::endl;
 						  } );
 }
 
-void RegisterDialog::UpdateLabelError( const QString& msg, const std::string& state )
+void RegisterDialog::UpdateLabelError( const QString& msg, EnumLabelError state )
 {
 	ui->label_error->setText( msg );
-	ui->label_error->setProperty( "state", state.c_str() );
+	ui->label_error->setProperty(
+		"state", state == EnumLabelError::Normal ? "normal" : "error" );
 	Polisher::GetInstance()->Repolish( ui->label_error );
 }
 
@@ -104,43 +126,43 @@ void RegisterDialog::Slot_OnSendVerificationCode()
 											 EnumRequestType::GetVerificationCode,
 											 EnumModule::RegisterMod );
 
-		UpdateLabelError( "Verification code has been sent to your email!", "normal" );
+		UpdateLabelError( "Verification code has been sent to your email!", EnumLabelError::Normal );
 	}
 	else
 	{
-		UpdateLabelError( "Invalid email address", "error" );
+		UpdateLabelError( "Invalid email address", EnumLabelError::Error );
 	}
 }
 
 void RegisterDialog::Slot_OnConfirm()
 {
 	if ( ui->edit_account->text() == "" ) {
-		UpdateLabelError( tr( "用户名不能为空" ), "error" );
+		UpdateLabelError( tr( "用户名不能为空" ), EnumLabelError::Error );
 		return;
 	}
 
 	if ( ui->edit_mail->text() == "" ) {
-		UpdateLabelError( tr( "邮箱不能为空" ), "error" );
+		UpdateLabelError( tr( "邮箱不能为空" ), EnumLabelError::Error );
 		return;
 	}
 
 	if ( ui->edit_password->text() == "" ) {
-		UpdateLabelError( tr( "密码不能为空" ), "error" );
+		UpdateLabelError( tr( "密码不能为空" ), EnumLabelError::Error );
 		return;
 	}
 
 	if ( ui->edit_comfirm_password->text() == "" ) {
-		UpdateLabelError( tr( "确认密码不一致" ), "error" );
+		UpdateLabelError( tr( "确认密码不一致" ), EnumLabelError::Error );
 		return;
 	}
 
 	if ( ui->edit_comfirm_password->text() != ui->edit_password->text() ) {
-		UpdateLabelError( tr( "密码和确认密码不匹配" ), "error" );
+		UpdateLabelError( tr( "密码和确认密码不匹配" ), EnumLabelError::Error );
 		return;
 	}
 
 	if ( ui->edit_verify->text() == "" ) {
-		UpdateLabelError( tr( "验证码不能为空" ), "error" );
+		UpdateLabelError( tr( "验证码不能为空" ), EnumLabelError::Error );
 		return;
 	}
 
@@ -148,12 +170,12 @@ void RegisterDialog::Slot_OnConfirm()
 	QJsonObject json_obj;
 	json_obj[ "user" ] = ui->edit_account->text();
 	json_obj[ "email" ] = ui->edit_mail->text();
-	json_obj[ "password" ] = Encipher:: ui->edit_comfirm_password->text();
+	json_obj[ "password" ] = Md5Encipher::Encrypt( ui->edit_comfirm_password->text() ); // 发送 MD5 加密的密码
 	json_obj[ "verify_code" ] = ui->edit_verify->text();
 
 	HttpMgr::GetInstance()->PostRequest( QUrl( gate_url_prefix + "/user_register" ),
 										 json_obj,
-										 EnumRequestType::RegisterUser, 
+										 EnumRequestType::RegisterUser,
 										 EnumModule::RegisterMod );
 }
 
@@ -162,14 +184,14 @@ void RegisterDialog::Slot_HandleWhenHttpFinished( EnumRequestType req_type, QStr
 	std::cout << "slot RegisterDialog Handle" << std::endl;
 	if ( error != EnumError::Success )
 	{
-		UpdateLabelError( tr( "network request failed" ), "error" );
+		UpdateLabelError( tr( "network request failed" ), EnumLabelError::Error );
 		return;
 	}
 
 	QJsonDocument doc_json = QJsonDocument::fromJson( result.toUtf8() );
 	if ( doc_json.isNull() || !doc_json.isObject() )
 	{
-		UpdateLabelError( tr( "unable to interpret json" ), "error" );
+		UpdateLabelError( tr( "unable to interpret json" ), EnumLabelError::Error );
 		return;
 	}
 
