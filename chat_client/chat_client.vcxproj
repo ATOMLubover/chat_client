@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="HttpMgr.h" />
+    <ClInclude Include="Encipher.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="EnumError.h" />
     <ClInclude Include="EnumModule.h" />

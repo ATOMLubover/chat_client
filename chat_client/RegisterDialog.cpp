@@ -2,6 +2,7 @@
 
 #include "Polisher.h"
 #include "HttpMgr.h"
+#include "Encipher.h"
 
 RegisterDialog::RegisterDialog( QWidget* parent )
 	: QDialog( parent )
@@ -70,8 +71,11 @@ void RegisterDialog::InitHttpHandlers()
 								  return;
 							  }
 							  auto email = json[ "email" ].toString();
+							  auto uid = json[ "uid" ].toString();
 							  UpdateLabelError( tr( "用户注册成功" ), "normal" );
-							  std::cout << "email is " << email.toStdString() << std::endl;
+							  std::cout
+								  << "email returned: " << email.toStdString() << std::endl
+								  << "uid returned: " << uid.toStdString() << std::endl;
 						  } );
 }
 
@@ -144,7 +148,7 @@ void RegisterDialog::Slot_OnConfirm()
 	QJsonObject json_obj;
 	json_obj[ "user" ] = ui->edit_account->text();
 	json_obj[ "email" ] = ui->edit_mail->text();
-	json_obj[ "password" ] = ui->edit_comfirm_password->text();
+	json_obj[ "password" ] = Encipher:: ui->edit_comfirm_password->text();
 	json_obj[ "verify_code" ] = ui->edit_verify->text();
 
 	HttpMgr::GetInstance()->PostRequest( QUrl( gate_url_prefix + "/user_register" ),
@@ -169,6 +173,6 @@ void RegisterDialog::Slot_HandleWhenHttpFinished( EnumRequestType req_type, QStr
 		return;
 	}
 
-	std::cout << "handler called" << std::endl;
+	//std::cout << "handler called" << std::endl;
 	http_handlers[ req_type ]( doc_json.object() );
 }
